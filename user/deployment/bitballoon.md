@@ -1,10 +1,11 @@
 ---
 title: BitBalloon Deployment
 layout: en
+deploy: v1
 
 ---
 
-<div id="toc"></div>
+
 
 Travis CI can automatically deploy files to
 [BitBalloon](https://www.bitballoon.com/) after a successful build.
@@ -19,6 +20,7 @@ deploy:
   access-token:
     secure: "YOUR ENCRYPTED ACCESS TOKEN"
 ```
+{: data-file=".travis.yml"}
 
 ## Deploying a specific directory
 
@@ -33,6 +35,7 @@ deploy:
     secure: "YOUR ENCRYPTED ACCESS TOKEN"
   local-dir: "_build/"
 ```
+{: data-file=".travis.yml"}
 
 ## Running commands before and after deploy
 
@@ -48,3 +51,4 @@ after_deploy:
   - ./after_deploy_1.sh
   - ./after_deploy_2.sh
 ```
+{: data-file=".travis.yml"}

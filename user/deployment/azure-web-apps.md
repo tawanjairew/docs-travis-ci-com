@@ -1,6 +1,7 @@
 ---
 title: Azure Web App Deployment
 layout: en
+deploy: v1
 
 ---
 
@@ -16,6 +17,7 @@ deploy:
   site: azure_deployment_sitename       # If AZURE_WA_SITE isn't set
   slot: azure_deployment_slotname       # (optional) If AZURE_WA_SLOT isn't set
 ```
+{: data-file=".travis.yml"}
 
 It is not recommended that you put your Azure Deployment credentials unencrypted into your `.travis.yml`. Instead, use hidden environment variables or encrypted variables.
 
@@ -65,7 +67,7 @@ As this deployment strategy relies on `git`, be mindful that the deployment will
 honor `.gitignore`.
 
 If your `.gitignore` file matches something that your build creates, use
-[`before_deploy`](#Running-commands-before-and-after-deploy) to change
+[`before_deploy`](#running-commands-before-and-after-deploy) to change
 its content.
 
 ### Running commands before and after deploy
@@ -80,6 +82,7 @@ after_deploy:
   - ./after_deploy_1.sh
   - ./after_deploy_2.sh
 ```
+{: data-file=".travis.yml"}
 
 ### Deploying to slots
 
@@ -93,3 +96,4 @@ deploy:
   slot: myapp-develop
   on: develop
 ```
+{: data-file=".travis.yml"}

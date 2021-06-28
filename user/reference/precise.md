@@ -1,5 +1,5 @@
 ---
-title: The Build Environment
+title: The Precise Build Environment
 layout: en
 
 redirect_from:
@@ -7,12 +7,12 @@ redirect_from:
   - /user/workers/standard-infrastructure/
 ---
 
+> Precise is EOL by Canonical, try updating to a newer image and see our [Precise to Trusty Migration Guide](/user/precise-to-trusty-migration-guide) and [Trusty to Xenial Migration Guide](/user/trusty-to-xenial-migration-guide).
+
 ### What This Guide Covers
 
 This guide explain what packages, tools and settings are available in the Travis
 CI environment (often referred to as "CI environment").
-
-<div id="toc"></div>
 
 ## Overview
 
@@ -25,11 +25,11 @@ state and making sure that your tests run in an environment built from scratch.
 Builds have access to a variety of services for data storage and messaging, and
 can install anything that's required for them to run.
 
-  
+
 ## Networking
 
 The virtual machines in the Legacy environment running the tests have IPv6 enabled. They do not have any external IPv4 address but are fully able to communicate with any external IPv4 service.
-The container-based, OS X, and GCE (both Precise and Trusty) builds do not currently have IPv6 connectivity.
+The container-based, macOS, and GCE (both Precise and Trusty) builds do not currently have IPv6 connectivity.
 
 The IPv6 stack can have some impact on Java services in particular, where one might need to set the flag `java.net.preferIPv4Stack` to force the JVM to resort to the IPv4 stack should services show issues of not booting up or not being reachable via the network: `-Djava.net.preferIPv4Stack=true`.
 
@@ -42,7 +42,7 @@ images.
 
 For other images, see the list below:
 
-- [OS X CI Environment](/user/reference/osx)
+- [macOS CI Environment](/user/reference/osx)
 - [Trusty CI Environment](/user/reference/trusty)
 
 ### Version control
@@ -88,14 +88,14 @@ Language-specific workers have multiple runtimes for their respective language (
 - Redis
 - Riak
 - Apache Cassandra
-- Neo4J Community Edition
+- Neo4j Community Edition
 - ElasticSearch
 - CouchDB
 
 ### Firefox
 
 All virtual environments have recent version of Firefox installed, currently
-31.0 for Linux environments and 25.0 for OS X.
+31.0 for Linux environments and 25.0 for macOS.
 
 If you need a specific version of Firefox, use the Firefox addon to install
 it during the `before_install` stage of the build.
@@ -107,6 +107,7 @@ For example, to install version 17.0, add the following to your
 addons:
   firefox: "17.0"
 ```
+{: data-file=".travis.yml"}
 
 Please note that the addon only works in 64-bit Linux environments.
 
@@ -122,7 +123,7 @@ Please note that the addon only works in 64-bit Linux environments.
 
 ### Environment variables
 
-There is a [list of default environment variables](/user/environment-variables#Default-Environment-Variables) available in each build environment.
+There is a [list of default environment variables](/user/environment-variables#default-environment-variables) available in each build environment.
 
 ### Libraries
 
@@ -180,6 +181,9 @@ in order to minimize frictions when images are updated:
 
 ## JVM (Clojure, Groovy, Java, Scala) VM images
 
+See the [default JVM options](https://github.com/travis-ci/travis-cookbooks/blob/precise-stable/ci_environment/sbt-extras/templates/default/jvmopts.erb)
+for specific details on building JVM projects.
+
 ### JDK
 
 - Oracle JDK 7 (oraclejdk7)
@@ -187,8 +191,9 @@ in order to minimize frictions when images are updated:
 - OpenJDK 6 (openjdk6)
 - Oracle JDK 8 (oraclejdk8)
 
-OracleJDK 7 is the default because we have a much more recent patch level compared to OpenJDK 7 from the Ubuntu repositories. Sun/Oracle JDK 6 is not provided because
-it reached End of Life in fall 2012.
+OracleJDK 7 is the default because we have a much more recent patch level
+compared to OpenJDK 7 from the Ubuntu repositories. Sun/Oracle JDK 6 is not
+provided because it reached End of Life in fall 2012.
 
 The `$JAVA_HOME` will be set correctly when you choose the `jdk` value for the JVM image.
 
@@ -198,12 +203,15 @@ Stock Apache Maven 3.2.x, configured to use [Central](http://search.maven.org/) 
 
 ### Leiningen versions
 
-travis-ci.org has both standalone ("uberjar") Leiningen 1.7.x at `/usr/local/bin/lein1` and Leiningen 2.4.x at `/usr/local/bin/lein2`.
+Travis CI has both standalone ("uberjar") Leiningen 1.7.x at `/usr/local/bin/lein1` and Leiningen 2.4.x at `/usr/local/bin/lein2`.
 The default is 2.4.x; `/usr/local/bin/lein` is a symbolic link to `/usr/local/bin/lein2`.
 
 ### SBT versions
 
-travis-ci.org potentially provides any version of Simple Build Tool (sbt or SBT) thanks to very powerful [sbt-extras](https://github.com/paulp/sbt-extras) alternative. In order to reduce build time, popular versions of sbt are already pre-installed (like for instance 0.13.5 or 0.12.4), but `sbt` command is able to dynamically detect and install the sbt version required by your Scala projects.
+Travis CI potentially provides any version of Simple Build Tool (sbt or SBT) thanks to very powerful [sbt-extras](https://github.com/paulp/sbt-extras) alternative. In order to reduce build time, popular versions of sbt are already pre-installed (like for instance 0.13.5 or 0.12.4), but `sbt` command is able to dynamically detect and install the sbt version required by your Scala projects.
+
+See the [default sbt options](https://github.com/travis-ci/travis-cookbooks/blob/precise-stable/ci_environment/sbt-extras/templates/default/sbtopts.erb)
+for specific details on building projects with sbt.
 
 ### Gradle version
 
@@ -217,14 +225,14 @@ Erlang/OTP releases are built using [kerl](https://github.com/spawngrid/kerl).
 
 ### Rebar
 
-travis-ci.org provides a recent version of Rebar. If a repository has rebar binary bundled at `./rebar` (in the repo root), it will
+Travis CI provides a recent version of Rebar. If a repository has rebar binary bundled at `./rebar` (in the repo root), it will
 be used instead of the preprovisioned version.
 
-## Node.js VM images
+## JavaScript and Node.js images
 
 ### Node.js versions
 
-Node runtimes are built using [nvm](https://github.com/creationix/nvm).
+Node runtimes are built and installed using [nvm](https://github.com/creationix/nvm).
 
 ### SCons
 
@@ -234,31 +242,20 @@ Scons
 
 ### Haskell Platform Version
 
-[Haskell Platform](http://hackage.haskell.org/platform/contents.html) 2012.02 and GHC 7.0, 7.4, 7.6 and 7.8.
+[Haskell Platform](https://www.haskell.org/platform/contents.html) 2012.02 and GHC 7.0, 7.4, 7.6 and 7.8.
 
 ## Perl VM images
 
-### Perl versions
-
 Perl versions are installed via [Perlbrew](http://perlbrew.pl/).
-Those runtimes that end with the `-extras` suffix have been compiled with
-`-Duseshrplib` and `-Duseithreads` flags.
-These also have aliases with the `-shrplib` suffix.
+The default version of Perl is 5.14.
+
+### Perl runtimes with threading support
+
+{{ site.data.language-details.perl.threading }}
 
 ### Pre-installed modules
 
-cpanm (App::cpanminus)
-Dist::Zilla
-Dist::Zilla::Plugin::Bootstrap::lib
-ExtUtils::MakeMaker
-LWP
-Module::Install
-Moose
-Test::Exception
-Test::Kwalitee
-Test::Most
-Test::Pod
-Test::Pod::Coverage
+{{ site.data.language-details.perl.modules }}
 
 ## PHP VM images
 
@@ -266,12 +263,14 @@ Test::Pod::Coverage
 
 PHP runtimes are built using [php-build](https://github.com/CHH/php-build).
 
-[hhvm](https://github.com/facebook/hhvm) is also available.
-and the nightly builds are installed on-demand (as `hhvm-nightly`).
-
 ### XDebug
 
 Is supported.
+
+### Core extensions
+
+See the [default configure options](https://github.com/travis-ci/travis-cookbooks/blob/precise-stable/ci_environment/phpbuild/templates/default/default_configure_options.erb) to get an overview of the core extensions enabled.
+
 
 ### Extensions
 
@@ -338,6 +337,11 @@ zlib
 Xdebug
 ```
 
+### Chef Cookbooks for PHP
+
+If you want to learn all the details of how we build and provision multiple PHP installations, see our [php, phpenv and php-build Chef cookbooks](https://github.com/travis-ci/travis-cookbooks/tree/precise-stable/ci_environment).
+
+
 ## Python VM images
 
 ### Python versions
@@ -345,6 +349,10 @@ Xdebug
 Every Python has a separate virtualenv that comes with `pip` and `distribute` and is activated before running the build.
 
 Python 2.4 and Jython *are not supported* and there are no plans to support them in the future.
+
+### Default Python Version
+
+If you leave the `python` key out of your `.travis.yml`, Travis CI will use Python 2.7.
 
 ### Preinstalled pip packages
 
@@ -363,7 +371,7 @@ The Ruby images contain recent versions of:
 - JRuby: 1.7.x (1.8 and 1.9 mode)
 - Ruby Enterprise Edition: 1.8.7 2012.02
 
-> Ruby 1.8.6 and 1.9.1 are no [longer available on travis-ci.org](https://twitter.com/travisci/status/114926454122364928).
+> Ruby 1.8.6 and 1.9.1 are no longer available Travis CI.
 
 Pre-compiled versions are downloaded on demand from:
 - [rubies.travis-ci.org](http://rubies.travis-ci.org).
@@ -381,3 +389,7 @@ Recent 1.7.x version (usually the most recent)
 
 - bundler
 - rake
+
+## Other Ubuntu Linux Build Environments
+
+You can have a look at the [Ubuntu Linux overview page](/user/reference/linux) for the different Ubuntu Linux build environments you can use.

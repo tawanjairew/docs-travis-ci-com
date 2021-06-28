@@ -4,22 +4,20 @@ layout: en
 
 ---
 
-<div id="toc"></div>
+
 
 ## Overview
 
-[PlatformIO](http://platformio.org/) is a cross-platform code-builder and library manager for embedded development with no external dependencies. Using PlatformIO you can test your code on multiple platforms, frameworks and boards:
+[PlatformIO](http://platformio.org/) is a cross-platform code-builder and library manager for embedded development with no external dependencies. Using PlatformIO you can compile your code on multiple platforms, frameworks and boards. Unit testing requires a [monthly subscription](http://platformio.org/pricing).
 
-- *Platforms* - pre-built different development platforms for the most popular host OS (Mac OS X, Windows, Linux 32/64bit, Linux ARMv6+). Each of them
+- *Platforms* - pre-built different development platforms for the most popular host OS (macOS, Windows, Linux 32/64bit, Linux ARMv6+). Each of them
   includes compiler, debugger, uploader, etc:
 
-  ```
-  + Atmel AVR
-  + Espressif
-  + Teensy
-  + ST STM32
-  + [Full list](http://platformio.org/#!/platforms) at PlatformIO
-  ```
+  - Atmel AVR
+  - Espressif
+  - Teensy
+  - ST STM32
+  - [Full list](http://platformio.org/#!/platforms) at PlatformIO
 
 - *Frameworks* - pre-configured build scripts for the popular embedded frameworks:
 
@@ -30,7 +28,8 @@ layout: en
 
 - *Embedded* - pre-defined compilation profiles for a variety of embedded
   boards.
-      \+ [Full list](http://platformio.org/#!/boards) at PlatformIO
+
+[Full list](http://platformio.org/#!/boards) at PlatformIO
 
 ## .travis.yml Settings
 
@@ -38,30 +37,29 @@ Please read the official
 [PlatformIO & Travis CI](http://docs.platformio.org/en/latest/ci/travis.html) documentation before using PlatformIO.
 
 PlatformIO is written in Python and is recommended to be run within a [Travis CI
-Python isolated environment](/user/languages/python/#Travis-CI-Uses-Isolated-virtualenvs):
+Python isolated environment](/user/languages/python/#travis-ci-uses-isolated-virtualenvs):
 
 ```yaml
 language: python
 python:
-    - "2.7"
+  - "2.7"
 
-# Cache PlatformIO packages using Travis CI container-based infrastructure
-sudo: false
 cache:
-    directories:
-        - "~/.platformio"
+  directories:
+    - "~/.platformio"
 
 env:
-    - PLATFORMIO_CI_SRC=path/to/test/file.c
-    - PLATFORMIO_CI_SRC=examples/file.ino
-    - PLATFORMIO_CI_SRC=path/to/test/directory
+  - PLATFORMIO_CI_SRC=path/to/test/file.c
+  - PLATFORMIO_CI_SRC=examples/file.ino
+  - PLATFORMIO_CI_SRC=path/to/test/directory
 
 install:
-    - pip install -U platformio
+  - pip install -U platformio
 
 script:
-    - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+  - platformio ci --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 ```
+{: data-file=".travis.yml"}
 
 ### Testing Libraries
 
@@ -69,8 +67,9 @@ If the project you are testing is a library, please use the  `--lib="."` option 
 
 ```yaml
 script:
-    - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+  - platformio ci --lib="." --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 ```
+{: data-file=".travis.yml"}
 
 ### Managing dependencies
 
@@ -85,14 +84,13 @@ For the dependencies available in the PlatformIO Library Registry:
 
 ```yaml
 install:
-    - pip install -U platformio
+  - pip install -U platformio
 
-    #
-    # Libraries from PlatformIO Library Registry:
-    #
-    # http://platformio.org/#!/lib/show/1/OneWire
-    platformio lib install 1
+  # Libraries from PlatformIO Library Registry:
+  # http://platformio.org/#!/lib/show/1/OneWire
+  - platformio lib install 1
 ```
+{: data-file=".travis.yml"}
 
 #### Installing dependencies manually
 
@@ -100,15 +98,16 @@ For the dependencies not available in the PlatformIO Library Registry:
 
 ```yaml
 install:
-    - pip install -U platformio
+  - pip install -U platformio
 
-    # download library to the temporary directory
-    wget https://github.com/PaulStoffregen/OneWire/archive/master.zip -O /tmp/onewire_source.zip
-    unzip /tmp/onewire_source.zip -d /tmp/
+  # download library to the temporary directory
+  - wget https://github.com/PaulStoffregen/OneWire/archive/master.zip -O /tmp/onewire_source.zip
+  - unzip /tmp/onewire_source.zip -d /tmp/
 
 script:
-    - platformio ci --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
+  - platformio ci --lib="/tmp/OneWire-master" --board=TYPE_1 --board=TYPE_2 --board=TYPE_N
 ```
+{: data-file=".travis.yml"}
 
 ### Custom Build Flags
 
@@ -117,14 +116,15 @@ To specify custom build flags using the
 
 ```yaml
 env:
-    - PLATFORMIO_CI_SRC=path/to/test/file.c PLATFORMIO_BUILD_FLAGS="-D SPECIFIC_MACROS_PER_TEST_ENV -I/extra/inc"
-    - PLATFORMIO_CI_SRC=examples/file.ino
-    - PLATFORMIO_CI_SRC=path/to/test/directory
+  - PLATFORMIO_CI_SRC=path/to/test/file.c PLATFORMIO_BUILD_FLAGS="-D SPECIFIC_MACROS_PER_TEST_ENV -I/extra/inc"
+  - PLATFORMIO_CI_SRC=examples/file.ino
+  - PLATFORMIO_CI_SRC=path/to/test/directory
 
 install:
-    - pip install -U platformio
-    export PLATFORMIO_BUILD_FLAGS=-D GLOBAL_MACROS_FOR_ALL_TEST_ENV
+  - pip install -U platformio
+  - export PLATFORMIO_BUILD_FLAGS=-D GLOBAL_MACROS_FOR_ALL_TEST_ENV
 ```
+{: data-file=".travis.yml"}
 
 More details available at [build flags/options](http://docs.platformio.org/en/latest/projectconf.html#build-flags).
 
@@ -134,8 +134,9 @@ You can configure multiple build environments using a [platformio.ini](http://do
 
 ```yaml
 script:
-    - platformio ci --project-conf=/path/to/platformio.ini
+  - platformio ci --project-conf=/path/to/platformio.ini
 ```
+{: data-file=".travis.yml"}
 
 ## Examples
 

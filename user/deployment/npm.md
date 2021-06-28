@@ -1,6 +1,7 @@
 ---
 title: npm Releasing
 layout: en
+deploy: v1
 ---
 
 Travis CI can automatically release your npm package to [npmjs.com][npmjs]
@@ -9,17 +10,22 @@ publishes to npmjs.com, however if you have a `publishConfig.registry` key in yo
 `package.json` then Travis CI publishes to that registry instead.
 
 
-<div id="toc"></div>
+
 
 
 A minimal `.travis.yml` configuration for publishing to [npmjs.com][npmjs] with npm version 2+ looks like:
 
 ```yaml
+language: node_js
+node_js:
+  - "12.13"
+
 deploy:
   provider: npm
   email: "YOUR_EMAIL_ADDRESS"
   api_key: "YOUR_AUTH_TOKEN"
 ```
+{: data-file=".travis.yml"}
 
 You can have the `travis` tool set up everything for you:
 
@@ -34,12 +40,13 @@ it can modify the `.travis.yml` for you.
 
 Your NPM Auth Token can be obtained by:
 
-1. Log in to your NPM account, and [generate a new token](https://www.npmjs.com/settings/tokens).
+1. Log in to your NPM account, and generate a new token at `https://www.npmjs.com/settings/USER/tokens`, where
+  `USER` is the name of the user account which is capable of publishing the npm package.
 1. Use the NPM CLI command [`npm adduser`](https://docs.npmjs.com/cli/adduser) to create a user, then open the `~/.npmrc` file:
     1. For NPM v2+, use the `authToken` value.
     1. For NPM ~1, use the `auth` value.
 
-Always [encrypt](/user/encryption-keys/#Usage) your auth token. Assuming you have the Travis CI command line client installed, you can do it like this:
+Always [encrypt](/user/encryption-keys/#usage) your auth token. Assuming you have the Travis CI command line client installed, you can do it like this:
 
 ```bash
 $ travis encrypt YOUR_AUTH_TOKEN --add deploy.api_key
@@ -57,6 +64,7 @@ deploy:
   on:
     tags: true
 ```
+{: data-file=".travis.yml"}
 
 If you tag a commit locally, remember to run `git push --tags` to ensure that
 your tags are uploaded to GitHub.
@@ -69,6 +77,7 @@ deploy:
   on:
     branch: production
 ```
+{: data-file=".travis.yml"}
 
 Alternatively, you can also configure Travis CI to release from all branches:
 
@@ -78,6 +87,7 @@ deploy:
   on:
     all_branches: true
 ```
+{: data-file=".travis.yml"}
 
 Builds triggered from Pull Requests will never trigger a release.
 
@@ -92,23 +102,25 @@ deploy:
   ...
   skip_cleanup: true
 ```
+{: data-file=".travis.yml"}
 
 ## Conditional releases
 
 [A deployment issue](https://github.com/travis-ci/travis-ci/issues/4738) is
 reported when multiple attempts are made.
 We recommend deploying from only one job with
-[Conditional Releases with `on:`](/user/deployment#Conditional-Releases-with-on%3A).
+[Conditional Releases with `on:`](/user/deployment#conditional-releases-with-on).
 
 ## Tagging releases
 
-You can automatically tag releases with the `tag` option:
+You can automatically add [npm distribution tags](https://docs.npmjs.com/getting-started/using-tags) with the `tag` option:
 
 ```yaml
 deploy:
   ...
   tag: next
 ```
+{: data-file=".travis.yml"}
 
 ## Note on `.gitignore`
 
@@ -120,7 +132,7 @@ See [`npm` documentation](https://docs.npmjs.com/misc/developers#keeping-files-o
 for more details.
 
 If your `.gitignore` file matches something that your build creates, use
-[`before_deploy`](#Running-commands-before-and-after-deploy) to change
+[`before_deploy`](#running-commands-before-and-after-deploy) to change
 its content, or create (potentially empty) `.npmignore` file
 to override it.
 
@@ -136,6 +148,7 @@ after_deploy:
   - ./after_deploy_1.sh
   - ./after_deploy_2.sh
 ```
+{: data-file=".travis.yml"}
 
 ## Troubleshooting "npm ERR! You need a paid account to perform this action."
 

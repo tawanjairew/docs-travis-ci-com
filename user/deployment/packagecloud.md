@@ -1,6 +1,7 @@
 ---
 title: packagecloud Deployment
 layout: en
+deploy: v1
 
 ---
 
@@ -17,6 +18,7 @@ deploy:
   token: "YOUR TOKEN"
   dist: "YOUR DIST" # like 'ubuntu/precise', or 'centos/5', if pushing deb or rpms
 ```
+{: data-file=".travis.yml"}
 
 Take note that your repository name should not have a forward slash in it. For example if your repository appears as `username / repo` on packagecloud.io, you should only put `repo` in the `repository:` option and put `username` in the `username:` option.
 
@@ -45,22 +47,22 @@ You can explicitly specify the branch to release from with the **on** option:
 ```yaml
 deploy:
   provider: packagecloud
-  username: ...
-  token: ...
   on:
     branch: production
+  # ⋮
 ```
+{: data-file=".travis.yml"}
 
 Alternatively, you can also configure Travis CI to release from all branches:
 
 ```yaml
 deploy:
   provider: packagecloud
-  username: ...
-  token: ...
   on:
     all_branches: true
+  # ⋮
 ```
+{: data-file=".travis.yml"}
 
 By default, Travis CI will only release from the **master** branch.
 
@@ -75,10 +77,10 @@ Maybe that is not what you want, as you might generate some artifacts that are s
 ```yaml
 deploy:
   provider: packagecloud
-  username: ...
-  token: ...
   skip_cleanup: true
+  # ⋮
 ```
+{: data-file=".travis.yml"}
 
 ### Specify package folder
 
@@ -88,20 +90,20 @@ You can specify which directory to scan from with the `local-dir` option. This e
 ```yaml
 deploy:
   provider: packagecloud
-  username: ...
-  token: ...
   local-dir: build
+  # ⋮
 ```
+{: data-file=".travis.yml"}
 
 Alternately, you may wish to specify the `package_glob` argument to restrict which files to scan. It defaults to `**/*` (recursively finding all package files) but this may pick up other artifacts you don't want to release. For example, if you only want to push gems in the top level directory:
 
 ```yaml
 deploy:
   provider: packagecloud
-  username: ...
-  token: ...
-  package_glob: *.gem
+  package_glob: "*.gem"
+  # ⋮
 ```
+{: data-file=".travis.yml"}
 
 ### A note about Debian source packages
 
@@ -111,7 +113,7 @@ the `local-dir` directory. Ensure the source package and it's contents are outpu
 ### Conditional releases
 
 You can deploy only when certain conditions are met.
-See [Conditional Releases with `on:`](/user/deployment#Conditional-Releases-with-on%3A).
+See [Conditional Releases with `on:`](/user/deployment#conditional-releases-with-on).
 
 ### Running commands before and after release
 
@@ -120,8 +122,9 @@ Sometimes you want to run commands before or after releasing a package. You can 
 ```yaml
 before_deploy: "echo 'ready?'"
 deploy:
-  ..
+  # ⋮
 after_deploy:
   - ./after_deploy_1.sh
   - ./after_deploy_2.sh
 ```
+{: data-file=".travis.yml"}

@@ -1,6 +1,7 @@
 ---
 title: Surge.sh Deployment
 layout: en
+deploy: v1
 
 ---
 
@@ -27,8 +28,9 @@ Example:
 deploy:
   provider: surge
   project: ./static/
-  domain: example.surge.sh  
+  domain: example.surge.sh
 ```
+{: data-file=".travis.yml"}
 
 ### Generated content
 
@@ -37,8 +39,9 @@ If you are generating files for deployment you must tell the `deploy` step to ke
 ```yaml
 deploy:
   ...
-  skip_cleanup: true
+  cleanup: false
 ```
+{: data-file=".travis.yml"}
 
 It is suggested that you generate your files during the `script` step or the `before_deploy` step.
 
@@ -52,8 +55,10 @@ By default, Travis CI will only deploy from your `master` branch. You can specif
 ```yaml
 deploy:
   ...
-  on: myProductionBranch
+  on:
+    branch: myProductionBranch
 ```
+{: data-file=".travis.yml"}
 
 To deploy from all branches set the deploy->on option `all_branches` to `true`
 
@@ -63,3 +68,4 @@ deploy:
   on:
     all_branches: true
 ```
+{: data-file=".travis.yml"}

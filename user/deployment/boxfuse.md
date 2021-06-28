@@ -1,6 +1,7 @@
 ---
 title: Boxfuse Deployment
 layout: en
+deploy: v1
 
 ---
 
@@ -15,6 +16,7 @@ deploy:
   secret: "YOUR BOXFUSE CLIENT SECRET"
   payload: "YOUR APPLICATION ARTIFACT (typically a jar, war, tar.gz or zip file)"
 ```
+{: data-file=".travis.yml"}
 
 We recommended that you encrypt your Boxfuse user and secret. Assuming you have the Travis CI command line client installed, you can do it like this (you will be prompted for values on the command line):
 
@@ -23,7 +25,7 @@ travis encrypt --add deploy.user
 travis encrypt --add deploy.secret
 ```
 
-Alternatively you can pass in your credentails using Travis CI [encrypted environment variables](/user/environment-variables/#Encrypted-Variables) called `BOXFUSE_USER` and `BOXFUSE_SECRET`. You can define these variables either using the Travis CI command line client or directly in the Travis CI repository settings UI.
+Alternatively you can pass in your credentials using Travis CI [encrypted environment variables](/user/environment-variables/#encrypting-environment-variables) called `BOXFUSE_USER` and `BOXFUSE_SECRET`. You can define these variables either using the Travis CI command line client or directly in the Travis CI repository settings UI.
 
 Finally you can also fully configure Boxfuse by placing a `boxfuse.conf` file in the root of your repository. More info about configuration in the [Boxfuse Command-line Client documentation](https://boxfuse.com/docs/commandline/).
 
@@ -39,6 +41,7 @@ deploy:
   payload: "YOUR APPLICATION ARTIFACT (typically a jar, war, tar.gz or zip file)"
   image: "YOUR BOXFUSE APP AND VERSION (ex.: myapp:1.23)"
 ```
+{: data-file=".travis.yml"}
 
 You can also use Travis CI [environment variables](/user/environment-variables) like `TRAVIS_BUILD_NUMBER` to assign a version to the image. Ex.: `image: "myapp:$TRAVIS_BUILD_NUMBER"`
 
@@ -54,6 +57,7 @@ deploy:
   payload: "YOUR APPLICATION ARTIFACT (typically a jar, war, tar.gz or zip file)"
   env: "YOUR BOXFUSE ENVIRONMENT (default: test)"
 ```
+{: data-file=".travis.yml"}
 
 ### Using alternative configuration files
 
@@ -64,6 +68,7 @@ deploy:
   provider: boxfuse
   configfile: "YOUR BOXFUSE CONFIGURATION FILE"
 ```
+{: data-file=".travis.yml"}
 
 ### Specifying custom arguments
 
@@ -74,6 +79,7 @@ deploy:
   provider: boxfuse
   extra_args: "YOUR EXTRA ARGS (ex.: -X)"
 ```
+{: data-file=".travis.yml"}
 
 ### Further information
 
