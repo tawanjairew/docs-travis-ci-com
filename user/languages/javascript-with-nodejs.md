@@ -1,90 +1,101 @@
 ---
-title: Building a Node.js project
+title: Building a JavaScript and Node.js project
 layout: en
-permalink: /user/languages/javascript-with-nodejs/
+
 ---
 
-<div id="toc"></div>
+## What This Guide Covers
 
-This guide covers build environment and configuration topics specific to Node.js projects. Please make sure to read our [Getting Started](/user/getting-started/) and [general build configuration](/user/customizing-the-build/) guides first.
+<aside markdown="block" class="ataglance">
 
-## Choosing Node versions to test against
+| JavaScript and Node.js                      | Default                                   |
+|:--------------------------------------------|:------------------------------------------|
+| [Default `install`](#dependency-management) | `npm install` or `npm ci`                 |
+| [Default `script`](#default-build-script)   | `npm test`                                |
+| [Matrix keys](#build-matrix)                | `env`, `node_js`                          |
+| Support                                     | [Travis CI](mailto:support@travis-ci.com) |
 
-You can choose Node.js and io.js versions to run your tests by adding them to the `node_js` section of your  `.travis.yml`:
+(If `package-lock.json` or `npm-shrinkwrap.json` exists and your npm version supports it, Travis CI will use `npm ci` instead of `npm install`.)
+
+Minimal example:
+
+```yaml
+language: node_js
+```
+{: data-file=".travis.yml"}
+
+</aside>
+
+{{ site.data.snippets.all_note }}
+
+This guide covers build environment and configuration topics specific to JavaScript and Node.js
+projects. Please make sure to read our [Tutorial](/user/tutorial/)
+and [general build configuration](/user/customizing-the-build/) guides first.
+
+## Specifying Node.js versions
+
+The easiest way to specify Node.js versions is to use one or more of the latest
+releases in your `.travis.yml`:
+
+- `node` latest stable Node.js release
+- `lts/*` latest LTS Node.js release
+{% for vers in site.data.node_js_versions %}
+- `{{vers}}` latest {{vers}}.x release
+{% endfor %}
 
 ```yaml
 language: node_js
 node_js:
-  - "6"
-  - "6.1"
-  - "5.11"
-  - "0.6"
-  - "iojs"
+  - 7
 ```
+{: data-file=".travis.yml"}
 
-These values are passed on to [`nvm`](https://github.com/creationix/nvm);
-newer releases not shown above may be used if `nvm` recognizes them.
+More specific information on what versions of Node.js are available is in
+the Environment Reference pages:
 
-For precise versions pre-installed on the VM, please consult "Build system information" in the build log.
+* [Precise](/user/reference/precise/#javascript-and-nodejs-images)
+* [Trusty](/user/reference/trusty/#javascript-and-nodejs-images)
 
-## Available Versions
+If you need more specific control of Node.js versions in your build, use any
+version installable by `nvm`. If your `.travis.yml` contains a version of
+Node.js that `nvm` cannot install, such as `0.4`, the job errors immediately.
 
-* 6.1.x
-* 6.0.x
-* 5.11.x
-* 5.10.x
-* 5.9.x
-* 5.8.x
-* 5.7.x
-* 5.6.x
-* 5.5.x
-* 5.4.x
-* 5.3.x
-* 5.2.x
-* 5.1.x
-* 5.0.x
-* 4.4.x
-* 4.3.x
-* 4.2.x
-* 4.1.x
-* 4.0.x
-* 0.12.x
-* 0.11.x
-* 0.10.x
-* 0.8.x
-* 0.6.x
+For a precise list of versions pre-installed on the VM, please consult "Build
+system information" in the build log.
 
-Use the following convenience versions:
+## Specifying Node.js versions using .nvmrc
 
- * `node` latest stable Node.js release
- * `iojs` latest stable io.js release
- * `6` latest 6.x release
- * `5` latest 5.x release
- * `4` latest 4.x release
+Optionally, your repository can contain a `.nvmrc` file in the repository root
+to specify which *single* version of Node.js to run your tests against.
 
-Specifying only a major and minor version (e.g., "0.12") will run using the latest published patch release for that version. If a specific version is not needed, we encourage users to specify `node` and/or `iojs` to run using the latest stable releases. [nvm](https://github.com/creationix/nvm) handles version resolution, so any version or [alias](https://github.com/creationix/nvm#usage) of Node.js or io.js that nvm can install is available.
+The `.nvmrc` file is *only read* when `node_js` key in your `.travis.yml` files
+does *not* specify a nodejs version. When the `.nvmrc` file is read,
+`$TRAVIS_NODE_VERSION` is set to the nodejs version. See [nvm
+documentation](https://github.com/creationix/nvm#usage) for more information on
+`.nvmrc`.
 
-If the version of Node.js cannot be used (because `nvm` cannot install it, and a suitable version is not locally installed), the job will error immediately.
+## Default Build Script
 
-For example, see [hook.io-amqp-listener .travis.yml](https://github.com/scottyapp/hook.io-amqp-listener/blob/master/.travis.yml).
-
-### Using `.nvmrc`
-
-Optionally, your repository can contain a `.nvmrc` file in the repository root to specify which *single* version of Node.js to run your tests against.
-
-The `.nvmrc` file is _only read_ when `node_js` key in your `.travis.yml` files does *not* specify a nodjs version. When the `.nvmrc` file is read, `$TRAVIS_NODE_VERSION` is set to the nodejs version. See [nvm documentation](https://github.com/creationix/nvm#usage) for more information on `.nvmrc`.
-
-## Default Test Script
-
-The default test script for projects using nodejs is:
+The default build script for projects using nodejs is:
 
 ```bash
 npm test
 ```
 
+In the case where no `package.json` file is present in the root folder, the default build script is:
+
+```bash
+make test
+```
+
+### Yarn is supported
+
+If `yarn.lock` exists, the default test command will be `yarn test` instead of `npm test`.
+
 ### Using other Test Suites
 
-You can tell npm how to run your test suite by adding a line in `package.json`. For example, to test using Vows:
+You can tell npm how to run your test suite by adding a line in `package.json`.
+For example, to test using Vows:
 
 ```json
 "scripts": {
@@ -99,32 +110,124 @@ If you already use Gulp to manage your tests, install it and run the default
 
 ```yaml
 before_script:
-  - npm install -g gulp
+  - npm install -g gulp-cli
 script: gulp
 ```
+{: data-file=".travis.yml"}
 
 ## Dependency Management
 
-### Travis CI uses npm
+Travis CI uses [npm](https://npmjs.org/) or [yarn](https://yarnpkg.com) to install your project dependencies.
 
-Travis CI uses [npm](http://npmjs.org/) to install your project dependencies:
+> Note that there are no npm packages installed by default in the Travis CI environment.
 
-```bash
-npm install
+### Using `npm`
+
+#### Using a specific `npm` version
+
+Add the following to the [`before_install` phase](/user/job-lifecycle/) of `.travis.yml`:
+
+```yaml
+before_install:
+  - npm i -g npm@version-number
+```
+{: data-file=".travis.yml"}
+
+### `npm ci` support
+
+If `package-lock.json` or `npm-shrinkwrap.json` exists and your npm version
+supports it, Travis CI will use `npm ci` instead of `npm install`.
+
+This command will delete your `node_modules` folder and install all dependencies
+as specified in your lock file.
+
+#### Caching with `npm`
+
+`npm` is now cached by default, in case you want to disable it, please add the following to your `.travis.yml`:
+
+```yaml
+cache:
+  npm: false
 ```
 
-> Note that there are no npm packages installed by default in the Travis CI environment , your dependencies are downloaded and installed every build.
+To explicitly cache your dependencies:
+
+```yaml
+cache: npm
+```
+{: data-file=".travis.yml"}
+
+1. This caches `$HOME/.npm` precisely when `npm ci` is the default `script` command.
+(See above.)
+
+1. In all other cases, this will cache `node_modules`.
+Note that `npm install` will still run on every build and will update/install
+any new packages added to your `package.json` file.
+
+Even when `script` is overridden, this shortcut is effective.
+
+### Using `yarn`
+
+Travis CI detects use of [yarn](https://yarnpkg.com/).
+
+If both `package.json` and `yarn.lock` are present in the current
+directory, we run the following command _instead of_
+`npm install`:
+
+```bash
+yarn --frozen-lockfile
+```
+
+If your Yarn version does not support `--frozen-lockfile`, we run just `yarn`.
+
+Note that `yarn` requires Node.js version 4 or later.
+If the job does not meet this requirement, `npm install` is used
+instead.
+
+
+#### Using a specific `yarn` version
+
+Add the following to the [`before_install` phase](/user/job-lifecycle/) of `.travis.yml`:
+
+```yaml
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version version-number
+  - export PATH="$HOME/.yarn/bin:$PATH"
+```
+{: data-file=".travis.yml"}
+
+#### Caching with `yarn`
+
+```yaml
+cache: yarn
+```
+{: data-file=".travis.yml"}
+
+will add `yarn`'s default caching directory (which varies depending on the OS),
+as indicated by [`yarn cache dir`](https://yarnpkg.com/en/docs/cli/cache#toc-yarn-cache-dir).
+
+If your caching needs to include other directives, you can use:
+
+```yaml
+cache:
+  yarn: true
+```
+{: data-file=".travis.yml"}
+
+For more information, refer to [Caching](/user/caching) documentation.
 
 ### Using shrinkwrapped git dependencies
 
-Note that `npm install` can fail if a shrinkwrapped git dependency pointing to a branch has its HEAD changed.
+Note that `npm install` can fail if a shrinkwrapped git dependency pointing to a
+branch has its HEAD changed.
 
 ## Ember Apps
 
-You can build your Ember applications on Travis CI. The default test framework is [`Qunit`](http://qunitjs.com/). The following example shows how to build and test against different Ember versions.
+You can build your Ember applications on Travis CI. The default test framework
+is [`Qunit`](http://qunitjs.com/). The following example shows how to build and
+test against different Ember versions.
 
 ```yaml
-sudo: required
 dist: trusty
 addons:
   apt:
@@ -134,13 +237,13 @@ addons:
       - google-chrome-stable
 language: node_js
 node_js:
-  - "0.12"
+  - "7"
 env:
     - EMBER_VERSION=default
     - EMBER_VERSION=release
     - EMBER_VERSION=beta
     - EMBER_VERSION=canary
-matrix:
+jobs:
   fast_finish: true
   allow_failures:
     - env: EMBER_VERSION=release
@@ -150,7 +253,7 @@ matrix:
 before_install:
     # setting the path for phantom.js 2.0.0
     - export PATH=/usr/local/phantomjs-2.0.0/bin:$PATH
-    # starting a GUI to run tests, per https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-xvfb-to-Run-Tests-That-Require-a-GUI
+    # starting a GUI to run tests, per https://docs.travis-ci.com/user/gui-and-headless-browsers/#using-xvfb-to-run-tests-that-require-a-gui
     - export DISPLAY=:99.0
     - sh -e /etc/init.d/xvfb start
     - "npm config set spin false"
@@ -165,8 +268,8 @@ install:
     - bower install
 script:
     - ember test --server
-
 ```
+{: data-file=".travis.yml"}
 
 ## Meteor Apps
 
@@ -176,14 +279,16 @@ You can build your Meteor Apps on Travis CI and test against
 ```yaml
 language: node_js
 node_js:
-  - "0.12"
+  - "7"
 before_install:
-  - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-laika/master/configure.sh | /bin/sh"
+  - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-laika/6a3a7afc21be99f1afedbd2856d060a02755de6d/configure.sh | /bin/sh"
 services:
   - mongodb
 env:
   - LAIKA_OPTIONS="-t 5000"
 ```
+{: data-file=".travis.yml"}
+
 More info on [testing against laika](https://github.com/arunoda/travis-ci-laika).
 
 ## Meteor Packages
@@ -195,29 +300,28 @@ The following `before_install` script installs the required dependencies:
 ```yaml
 language: node_js
 node_js:
-  - "0.12"
+  - "7"
 before_install:
-  - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-meteor-packages/master/configure.sh | /bin/sh"
+  - "curl -L https://raw.githubusercontent.com/arunoda/travis-ci-meteor-packages/dca8e51fafd60d9e5a8285b07ca34a63f22a5ed4/configure.sh | /bin/sh"
 before_script:
   - "export PATH=$HOME/.meteor:$PATH"
 ```
+{: data-file=".travis.yml"}
 
 Find the source code at [travis-ci-meteor-packages](https://github.com/arunoda/travis-ci-meteor-packages).
 
-
-## Build Matrix
-
-For JavaScript/Node.js projects, `env` and `node_js` can be used as arrays
-to construct a build matrix.
-
 ## Node.js v4 (or io.js v3) compiler requirements
 
-To compile native modules for io.js v3 or Node.js v4 or later, a
-[C++11 standard](https://en.wikipedia.org/wiki/C%2B%2B11)-compliant compiler is required. More specifically, either gcc 4.8 (or later), or clang 3.5 (or later) works.
+To compile native modules for io.js v3 or Node.js v4 or later, a [C++11
+standard](https://en.wikipedia.org/wiki/C%2B%2B11)-compliant compiler is
+required. More specifically, either gcc 4.8 (or later), or clang 3.5 (or later)
+works.
 
-Our Trusty images have gcc and clang that meet this requirement, but the Precise image does not.
+Our Trusty images have gcc and clang that meet this requirement, but the Precise
+image does not.
 
-To update these compilers to a newer version, for example, `gcc/g++` to version 4.8, add the following in your `.travis.yml`:
+To update these compilers to a newer version, for example, `gcc/g++` to version
+4.8, add the following in your `.travis.yml`:
 
 ```yaml
 language: node_js
@@ -232,6 +336,8 @@ addons:
     packages:
       - g++-4.8
 ```
+{: data-file=".travis.yml"}
 
-Due to recent decision by the LLVM team to remove APT support, it is currently not possible to update clang on Travis CI via `apt-get` or the `apt` addon.
-See [https://github.com/travis-ci/travis-ci/issues/6120](https://github.com/travis-ci/travis-ci/issues/6120).
+## Build Config Reference
+
+You can find more information on the build config format for [Javascript](https://config.travis-ci.com/ref/language/node_js) in our [Travis CI Build Config Reference](https://config.travis-ci.com/).
