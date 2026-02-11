@@ -1,6 +1,7 @@
 ---
 title: Rackspace Cloud Files Deployment
 layout: en
+deploy: v1
 
 ---
 
@@ -16,6 +17,7 @@ deploy:
   region: "CLOUDFILE REGION"
   container: "CLOUDFILES CONTAINER NAME"
 ```
+{: data-file=".travis.yml"}
 
 This example is almost certainly not ideal, as you probably want to upload your built binaries and documentation. Set skip_cleanup to true to prevent Travis CI from deleting your build artifacts.
 
@@ -28,6 +30,7 @@ deploy:
   container: "CLOUDFILES CONTAINER NAME"
   skip_cleanup: true
 ```
+{: data-file=".travis.yml"}
 
 It is recommended encrypt that you encrypt your Rackspace api key.
 Assuming you have the Travis CI command line client installed, you can do it like this:
@@ -46,7 +49,7 @@ travis setup cloudfiles
 
 Keep in mind that the above command has to run in your project directory, so it can modify the `.travis.yml` for you.
 
-### Deploy On Tags
+## Deploy On Tags
 
 Often, you want to deploy only when you release a new version of your code.
 
@@ -63,8 +66,9 @@ deploy:
   on:
     tags: true
 ```
+{: data-file=".travis.yml"}
 
-### Deploy To Only One Folder
+## Deploy to one Folder
 
 Often, you don't want to upload your entire project to Cloud Files. You can tell Travis CI to only upload a single folder to Cloud Files. This example uploads the build directory of your project to Cloud Files:
 
@@ -78,8 +82,9 @@ deploy:
   container: "CLOUDFILES CONTAINER NAME"
   skip_cleanup: true
 ```
+{: data-file=".travis.yml"}
 
-### Deploy to Multiple Containers:
+### Deploy to Multiple Containers
 
 If you want to upload to multiple containers, you can do this:
 
@@ -98,8 +103,9 @@ deploy:
     container: "CLOUDFILES CONTAINER NAME"
     skip_cleanup: true
 ```
+{: data-file=".travis.yml"}
 
-### Branch to release from
+## Release Branch
 
 You can explicitly specify the branch to release from with the **on** option:
 
@@ -114,6 +120,7 @@ deploy:
   on:
     branch: production
 ```
+{: data-file=".travis.yml"}
 
 Alternatively, you can also configure Travis CI to release from all branches:
 
@@ -128,17 +135,18 @@ deploy:
   on:
     all_branches: true
 ```
+{: data-file=".travis.yml"}
 
 Builds triggered from Pull Requests will never trigger a release.
 
-### Conditional releases
+### Conditional Releases
 
 You can deploy only when certain conditions are met.
-See [Conditional Releases with `on:`](/user/deployment#Conditional-Releases-with-on%3A).
+See [Conditional Releases with `on:`](/user/deployment#conditional-releases-with-on).
 
-### Running commands before and after release
+### Run Commands Before or After Release
 
-Sometimes you want to run commands before or after releasing a gem. You can use the `before_deploy` and `after_deploy` stages for this. These will only be triggered if Travis CI is actually pushing a release.
+Sometimes, you want to run commands before or after releasing a gem. You can use the `before_deploy` and `after_deploy` stages for this. These will only be triggered if Travis CI is actually pushing a release.
 
 ```yaml
 before_deploy: "echo 'ready?'"
@@ -148,3 +156,4 @@ after_deploy:
   - ./after_deploy_1.sh
   - ./after_deploy_2.sh
 ```
+{: data-file=".travis.yml"}

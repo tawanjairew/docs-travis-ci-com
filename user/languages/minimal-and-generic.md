@@ -1,0 +1,74 @@
+---
+title: Minimal and Generic Images
+layout: en
+
+---
+
+## What This Guide Covers
+
+
+Travis CI supports many popular programming languages, but it can never hope to support them all. This guide covers how to use minimal and generic images.
+
+`language: minimal` and `language: generic` are images available in the currently used Ubuntu distributions that are not tailored to any particular programming language. As their names suggest, `language: minimal` is optimized for speed and disk space, while `language: generic` offers more languages and services.
+
+> Note that `language: minimal` is not the same as omitting the `language` key; if you do that, the default language is set to Ruby.
+
+<aside markdown="block" class="ataglance">
+
+| Ruby              | Default                                                           |
+|:------------------|:------------------------------------------------------------------|
+| Default `install` | N/A                                                               |
+| Default `script`  | N/A                                                               |
+| Matrix keys       | N/A                                                               |
+| Support           | [Travis CI](mailto:support@travis-ci.com?Subject=Minimal%20image) |
+
+Examples:
+
+```yaml
+language: minimal
+```
+{: data-file=".travis.yml"}
+
+
+```yaml
+language: generic
+```
+{: data-file=".travis.yml"}
+
+</aside>
+
+## Defaults
+
+As neither `minimal` nor `generic` is tailored to one particular language, there are no default `install` or `script` commands, so remember to configure these in your `.travis.yml`.
+
+## Minimal
+
+The `minimal` image contains:
+
+* [version control tools](/user/reference/focal/#version-control)
+* [essential build tools such as gcc and make](/user/reference/focal/#compilers--build-toolchain)
+* [network tools such as curl](/user/reference/focal/#networking-tools)
+* [Docker](/user/reference/focal/#docker)
+* [python](/user/reference/focal/#python-images)
+
+## Generic
+
+The `generic` image contains everything from `minimal`, and also the usual databases, services, and language runtimes:
+
+* [version control tools](/user/reference/focal/#version-control)
+* [essential build tools such as gcc and make](/user/reference/focal/#compilers--build-toolchain)
+* [network tools such as curl and essential](/user/reference/focal/#networking-tools)
+* [Docker](/user/reference/focal/#docker)
+* [databases and services](/user/reference/focal/#databases-and-services)
+* [go](/user/reference/focal/#go-images)
+* [jvm](/user/reference/focal/#jvm-clojure-groovy-java-scala-images)
+* [node_js](/user/reference/focal/#javascript-and-nodejs-support)
+* [php](/user/reference/focal/#php-images)
+* [ruby](/user/reference/focal/#ruby-images)
+
+For specific details of what is on the image, consult the [build update](https://headwayapp.co/travis-ci-changelog).
+
+
+## Aliases
+
+Setting the `language` key to `bash`, `sh`, or `shell` is equivalent to `language: minimal`.
