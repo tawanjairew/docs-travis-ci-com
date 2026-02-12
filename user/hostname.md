@@ -1,11 +1,10 @@
 ---
 title: Setting Custom Hostname
 layout: en
-permalink: /user/hostname/
+
 ---
 
-This addon, available in build environment with `sudo` enabled,
-allows you to set the `hostname`.
+If you need to change the `hostname` you can use this addon:
 
 {% highlight yaml %}
 addons:
@@ -14,4 +13,4 @@ addons:
 
 This is useful when your processes require a short hostname.
 For example, [OpenJDK 6 and OpenJDK 7 processes will encounter
-buffer overflows when the host name is too long](https://github.com/travis-ci/travis-ci/issues/5227).
+buffer overflows when the hostname is too long](https://github.com/travis-ci/travis-ci/issues/5227).
